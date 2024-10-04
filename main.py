@@ -8,6 +8,7 @@ from roadmap import *
 def say_hello(message):
     bot.send_message(message.chat.id, "Muy buenas, mi nombre es JuanBot, y he sido creado para generar la plantilla de las juntas y asambleas", message_thread_id = message.message_thread_id)
 
+
 @bot.message_handler(commands=['help'])
 def show_commands(message):
     command_parts = message.text.split(" ")
@@ -29,12 +30,11 @@ def show_commands(message):
         }
         bot.send_message(message.chat.id, commands.get(message.text.split(" ")[1], "Comando desconocido"), message_thread_id = message.message_thread_id)
 
+
 @bot.message_handler(commands=['new'])
 def new_roadmap(message):
     command_parts = message.text.split(" ")
-    if len(command_parts) != 1:
-        bot.reply_to(message,"Uso de comando: \n/new", message_thread_id = message.message_thread_id)
-    elif len(command_parts) == 1:
+    if len(command_parts) == 1 and len(command_parts) != 2:
         bot.send_message(message.chat.id, "WARNING: /new va a borrar todo el contenido actual, si aún así quiere continuar, ejecute '/new ToySeguroJefe'", message_thread_id = message.message_thread_id)
     else:
         try:
@@ -68,6 +68,7 @@ def add_point_of_day(message):
             points_of_day_write.write("\n")
         bot.send_message(message.chat.id,  new_point_of_day + " añadido a los puntos del día", message_thread_id = message.message_thread_id)
 
+
 @bot.message_handler(commands=['list'])
 def list_points_of_day(message):
     command_parts = message.text.split(" ")
@@ -79,8 +80,8 @@ def list_points_of_day(message):
             with open('points_of_day.txt', 'r') as points_of_day_read:
                 contador = 1
                 for point_of_day in points_of_day_read:
-                    list_points_of_day = list_points_of_day + contador + "-" + point_of_day.split("-")[0].replace("PDD: " , "") + "\n"
-                    contador+1
+                    list_points_of_day = list_points_of_day + str(contador) + "-" + point_of_day.split("-")[0].replace("PDD: " , "") + "\n"
+                    contador = contador + 1
             bot.send_message(message.chat.id, list_points_of_day, message_thread_id = message.message_thread_id)
         except IOError:
             bot.reply_to(message, "No existe ningún archivo de puntos del día, puede crearlo con /new", message_thread_id = message.message_thread_id)
@@ -95,23 +96,25 @@ def list_points_of_day(message):
         except IOError:
             bot.reply_to(message, "No existe ningún archivo de puntos del día, puede crearlo con /new", message_thread_id = message.message_thread_id)
         
+
 @bot.message_handler(commands=['cambio'])
 def change_order_points_of_day(message):
     command_parts = message.text.split(" ")
-    first_point_of_day = command_parts[1]
-    second_point_of_day = command_parts[2]
+    first_point_of_day = int(command_parts[1])
+    second_point_of_day = int(command_parts[2])
     if len(command_parts) != 3:
         bot.reply_to(message, "Uso de comando: \n/cambio punto_del_dia_1 punto_del_dia_2", message_thread_id = message.message_thread_id)
     else:
         with open('points_of_day.txt', 'r') as points_of_day_read:
             list_points_of_day = points_of_day_read.readlines()
             number_points_of_day = len(list_points_of_day)
-        if number_points_of_day < first_point_of_day or points_of_day < second_point_of_day:
-            bot.reply_to(message, "Indices de puntos del día erróneos, intentelo de nuevo", messahe_thread_id = message.messahe_thread_id)
+        if number_points_of_day < first_point_of_day or number_points_of_day < second_point_of_day:
+            bot.reply_to(message, "Indices de puntos del día erróneos, intentelo de nuevo", message_thread_id = message.message_thread_id)
         else:
             list_points_of_day[first_point_of_day-1], list_points_of_day[second_point_of_day-1] = list_points_of_day[second_point_of_day-1], list_points_of_day[first_point_of_day-1]
             with open('points_of_day.txt', 'w') as points_of_day_write:
-                points_of_day_write.write(list_points_of_day)
+                points_of_day_write.writelines(list_points_of_day)
+
 
 @bot.message_handler(commands=['remove'])
 def remove_point_of_day(message):
@@ -133,14 +136,17 @@ def remove_point_of_day(message):
         except IOError:
             bot.reply_to(message, "No existe ningún archivo de puntos del día", message_thread_id = message.message_thread_id) 
 
+
 @bot.message_handler(commands=['delete'])
 def delete(message):
     bot.reply_to(message.text, "Comando no implementado, en proceso...", message_thread_id = message.message_thread_id)
+
 
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
     bot.reply_to(message, message.text, message_thread_id = message.message_thread_id)
     #message_thread_id = message.message_thread_id
+
 
 def run_bot():
     try:
@@ -152,6 +158,7 @@ def run_bot():
         print(f"Error: {e}. Reintentando en 15 segundos...")
         time.sleep(15)
         run_bot()
+
 
 if __name__ == '__main__':
     run_bot()
