@@ -1,6 +1,6 @@
 def points_of_day():
     latex_content = ""
-    with open ("points_of_day.txt", "r") as points_of_day_read:
+    with open ('points_of_day_' + type + '.txt', 'r') as points_of_day_read:
         for point_of_day in points_of_day_read:
             title = point_of_day.strip().split("-")[0].replace("PDD: ", "")
             desc = point_of_day.strip().split("-")[1]
@@ -62,7 +62,7 @@ def create_latex_content(type, date):
             \end{{table}}
     \section{{rden del día}}
         \subsection{{Aprobación del acta de la sesión anterior}}
-{points_of_day()}
+{points_of_day(type)}
         
         
         
