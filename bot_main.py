@@ -2,12 +2,12 @@ import telebot
 import time
 import os
 from dotenv import load_dotenv
-from roadmap import *
+from bot_utils import *
 
 load_dotenv()
-TOKEN =  os.getenv('TOKEN')
+token =  os.getenv('TOKEN')
 
-bot = telebot.TeleBot(TOKEN)  
+bot = telebot.TeleBot(token)  
 
 @bot.message_handler(commands=['hola'])
 def say_hello(message):
@@ -33,7 +33,6 @@ def show_commands(message):
         }
         bot.send_message(message.chat.id, commands.get(message.text.split(" ")[1], "Comando desconocido"), message_thread_id = message.message_thread_id)
 
-
 @bot.message_handler(commands=['new'])
 def new_roadmap(message):
     command_parts = message.text.split(" ")
@@ -48,7 +47,6 @@ def new_roadmap(message):
                 points_of_day_write.write("")
         except Exception:
             bot.reply_to(message, "Error al crear archivo de puntos a hablar", message_thread_id = message.message_thread_id)
-
 
 @bot.message_handler(commands=['add'])
 def add_point_of_day(message):
@@ -72,12 +70,11 @@ def add_point_of_day(message):
                 points_of_day_write.write(desc + " ")
             points_of_day_write.write("\n")
 
-
 @bot.message_handler(commands=['list'])
 def list_points_of_day(message):
     command_parts = message.text.split(" ")
     if len(command_parts) != 2 and len(command_parts) != 3:
-        bot.reply_to(message, "Uso de comando: \n/list [punto_del_día]", message_thread_id = message.message_thread_id)
+        bot.reply_to(message, "Uso de comando: \n/list tipo_reunión [punto_del_día]", message_thread_id = message.message_thread_id)
     elif len(command_parts) == 2:
         try: 
             type = command_parts[1].capitalize()
@@ -102,7 +99,6 @@ def list_points_of_day(message):
         except IOError:
             bot.reply_to(message, "No existe ningún archivo de puntos del día, puede crearlo con /new", message_thread_id = message.message_thread_id)
         
-
 @bot.message_handler(commands=['change'])
 def change_order_points_of_day(message):
     command_parts = message.text.split(" ")
@@ -121,7 +117,6 @@ def change_order_points_of_day(message):
             list_points_of_day[first_point_of_day-1], list_points_of_day[second_point_of_day-1] = list_points_of_day[second_point_of_day-1], list_points_of_day[first_point_of_day-1]
             with open('points_of_day_' + type + '.txt', 'w') as points_of_day_write:
                 points_of_day_write.writelines(list_points_of_day)
-
 
 @bot.message_handler(commands=['remove'])
 def remove_point_of_day(message):
@@ -143,12 +138,37 @@ def remove_point_of_day(message):
         except IOError:
             bot.reply_to(message, "No existe ningún archivo de puntos del día", message_thread_id = message.message_thread_id) 
 
+@bot.message_handler(commands=['roadmap'])
+def create_roadmap(message):
+    command_parts = message.text.split(" ")
+    if len(command_parts) != 3:
+        bot.reply_to(message,"Uso de comando: \n/roadmap tipo fecha \nTipo: 'Junta' o 'Asamblea'\nFecha: dd-mm-aaaa (17-Mayo-2003)")
+
+    elif command_parts[1].capitalize() != "Junta" and command_parts[1].capitalize() != "Asamblea":
+        bot.reply_to(message,"Uso de comando: \n/roadmap tipo fecha \nTipo: 'Junta' o 'Asamblea'\nFecha: dd-mm-aaaa (17-Mayo-2003)")
+
+    elif check_date(command_parts[2]):
+        bot.reply_to(message,"Uso de comando: \n/roadmap tipo fecha \nTipo: 'Junta' o 'Asamblea'\nFecha: dd-mm-aaaa (17-Mayo-2003)")
+
+    else:    
+        type = command_parts[1].capitalize()
+        date = command_parts[2]
+        try:
+            latex_content = create_latex_content(type, format_date_date(date))
+            roadmap_name = format_date_title(date) + ".tex"
+            with open(roadmap_name, "w") as new_roadmap:
+                new_roadmap.write(latex_content)
+
+            with open(roadmap_name, "rb") as send_roadmap:
+                bot.send_document(message.chat.id, send_roadmap)
+                bot.send_message(message.chat.id, "Para eliminar el arhicvo con los puntos del día puede ejecutar /delete o /new")
+        except Exception as e:
+            bot.reply_to(message, "Error al crear el PDF\n" + str(e))
+
 
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
     bot.reply_to(message, message.text, message_thread_id = message.message_thread_id)
-    #message_thread_id = message.message_thread_id
-
 
 def run_bot():
     try:
@@ -157,10 +177,9 @@ def run_bot():
         print("Bot detenido por el usuario (Ctrl+C)")
         bot.stop_polling() 
     except Exception as e:
-        print(f"Error: {e}. Reintentando en 15 segundos...")
-        time.sleep(15)
+        print(f"Error: {e}. Reintentando en 5 segundos...")
+        time.sleep(5)
         run_bot()
-
 
 if __name__ == '__main__':
     run_bot()

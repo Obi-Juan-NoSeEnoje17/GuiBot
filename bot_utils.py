@@ -1,9 +1,24 @@
-def points_of_day():
+def format_date_date(date):
+    day = date.split("-")[0]
+    month = date.split("-")[1]
+    year = date.split("-")[2]
+    return day + " " + month + " " + year
+
+def format_date_title(date):
+    day = date.split("-")[0]
+    month = date.split("-")[1]
+    year = date.split("-")[2]
+    return year + "-" + month + "-" + day
+
+def check_date(date):
+    return len(date.split("-")) != 3
+
+def points_of_day(type):
     latex_content = ""
     with open ('points_of_day_' + type + '.txt', 'r') as points_of_day_read:
         for point_of_day in points_of_day_read:
-            title = point_of_day.strip().split("-")[0].replace("PDD: ", "")
-            desc = point_of_day.strip().split("-")[1]
+            title = point_of_day.strip().split(":")[0]
+            desc = point_of_day.strip().split(": ")[1]
             latex_content = latex_content + "        \\subsection{" + title + "}\n            " + desc + "\n"
     return latex_content
 
