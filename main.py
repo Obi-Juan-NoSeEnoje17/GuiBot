@@ -1,20 +1,17 @@
 import telebot
 import time
-TOKEN = "7653047311:AAF2We2sxsdvvln-qdg0srosF2JcBO5mS8M" 
-bot = telebot.TeleBot(TOKEN)  
+import os
+from dotenv import load_dotenv
 from roadmap import *
+
+load_dotenv()
+TOKEN =  os.getenv('TOKEN')
+
+bot = telebot.TeleBot(TOKEN)  
 
 @bot.message_handler(commands=['hola'])
 def say_hello(message):
     bot.send_message(message.chat.id, "Muy buenas, mi nombre es JuanBot, y he sido creado para generar la plantilla de las juntas y asambleas", message_thread_id = message.message_thread_id)
-
-@bot.message_handler(commands=['mb'])
-def great_work(message):
-    user = message
-    chat = message.chat.id
-    id = message.message_thread_id
-    bot.delete_message(chat, message.message_id)
-    bot.send_message(chat, "Muy bien " + user.text.split(" ")[1], message_thread_id = id)
 
 @bot.message_handler(commands=['help'])
 def show_commands(message):
@@ -22,7 +19,7 @@ def show_commands(message):
     if len(command_parts) != 1 and len(command_parts) != 2:
         bot.reply_to(message, "Uso de comando \n/help : muestra ayuda general \n/help comando : muestra ayuda específica", message_thread_id = message.message_thread_id)
     elif len(command_parts) == 1:
-        overall_help = "Comandos existentes : /hola /help /new /add /list /change /remove /delete /roadmap\nUtilice /help comando para ver el uso de dicho comando"
+        overall_help = "Comandos existentes : /hola /help /new /add /list /change /remove /roadmap\nUtilice /help comando para ver el uso de dicho comando"
         bot.send_message(message.chat.id, overall_help, message_thread_id = message.message_thread_id)
     elif len(message.text.split(" ")) == 2:
         commands = {
@@ -32,8 +29,7 @@ def show_commands(message):
             "list" : "/list tipo_reunión [punto_del_día]\nMuestra todos los puntos del día existentes, sin la descripción, salvo que se indique dicho punto del día\ntipo_reunión: 'Junta' o 'Asamblea'",
             "change" : "/cambio tipo_reunión num_punto_del_dia_1 num_punto_del_dia_2 \nCambia el orden de los puntos del día\ntipo_reunión: 'Junta' o 'Asamblea'",
             "roadmap" : "/roadmap tipo fecha \nGenera el documento .tex \ntipo: 'Junta' o 'Asamblea' \nfecha: celebración de dicha reunión en formato dd-mm-aaaa",
-            "remove" : "/remove tipo_reunión punto_del_día\nElimina uno de los puntos del día\ntipo_reunión: 'Junta' o 'Asamblea'",
-            "delete" : "Elimina manualmente el archivo de puntos del día. Si se ejecuta /new se reemplaza por otro"
+            "remove" : "/remove tipo_reunión punto_del_día\nElimina uno de los puntos del día\ntipo_reunión: 'Junta' o 'Asamblea'"
         }
         bot.send_message(message.chat.id, commands.get(message.text.split(" ")[1], "Comando desconocido"), message_thread_id = message.message_thread_id)
 
@@ -146,11 +142,6 @@ def remove_point_of_day(message):
                     points_of_day_write.write(point_of_day)
         except IOError:
             bot.reply_to(message, "No existe ningún archivo de puntos del día", message_thread_id = message.message_thread_id) 
-
-
-@bot.message_handler(commands=['delete'])
-def delete(message):
-    bot.reply_to(message.text, "Comando no implementado, en proceso...", message_thread_id = message.message_thread_id)
 
 
 @bot.message_handler(func=lambda message: True)
