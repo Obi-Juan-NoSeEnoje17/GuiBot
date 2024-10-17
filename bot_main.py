@@ -1,5 +1,6 @@
 import telebot
 import time
+from datetime import datetime
 import os
 from dotenv import load_dotenv
 from bot_utils import *
@@ -174,10 +175,12 @@ def run_bot():
     try:
         bot.polling(none_stop=True, timeout=60, long_polling_timeout=60)
     except KeyboardInterrupt:
-        print("Bot detenido por el usuario (Ctrl+C)")
+        with open('error.log', 'a') as error_writer:
+            error_writer.write(datetime.now().strftime("%d de %B de %Y, %I:%M %p") + "Bot detenido por el usuario (Ctrl+C)")
         bot.stop_polling() 
     except Exception as e:
-        print(f"Error: {e}. Reintentando en 5 segundos...")
+        with open('error.log', 'a') as error_writer:
+            error_writer.write(datetime.now().strftime("%d de %B de %Y, %I:%M %p") + f"Error: {e}. Reintentando en 5 segundos...")
         time.sleep(5)
         run_bot()
 
