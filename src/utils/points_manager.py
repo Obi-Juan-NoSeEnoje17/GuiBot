@@ -15,7 +15,7 @@ def new_roadmap(bot, message):
     elif command_parts[2] == "confirmacion":
         meeting_type = command_parts[1].capitalize()
         try:
-            with open("points_of_day_" + meeting_type + ".txt", "w") as points_of_day_write:
+            with open("src/meeting_files/points_of_day_" + meeting_type + ".txt", "w") as points_of_day_write:
                 points_of_day_write.write("")
         except Exception:
             bot.reply_to(message, "Error al crear el archivo nuevo", message_thread_id = message.message_thread_id)
@@ -38,7 +38,7 @@ def add_point_of_day(bot, message):
         meeting_type = command_parts[1].capitalize()
         new_point_of_day = command_parts[2]
         try:
-            with open('points_of_day_' + meeting_type + '.txt', 'r') as points_of_day_read:
+            with open('src/meeting_files/points_of_day_' + meeting_type + '.txt', 'r') as points_of_day_read:
                 for point_of_day in points_of_day_read:
                     if (point_of_day.strip().split(":")[0] == new_point_of_day):
                         bot.reply_to(message, "Punto del día añadido anteriormente", message_thread_id = message.message_thread_id)
@@ -46,7 +46,7 @@ def add_point_of_day(bot, message):
         except IOError:
             bot.reply_to(message, "No existe ningún archivo de puntos del día, puede crearlo con /new", message_thread_id = message.message_thread_id)
             
-        with open('points_of_day_' + meeting_type + '.txt', 'a') as points_of_day_write:
+        with open('src/meeting_files/points_of_day_' + meeting_type + '.txt', 'a') as points_of_day_write:
             points_of_day_write.write(new_point_of_day + ": ")
             for desc in command_parts[3:]:
                 points_of_day_write.write(desc + " ")
@@ -68,7 +68,7 @@ def list_points_of_day(bot, message):
         try:
             meeting_type = command_parts[1].capitalize()
             list_points_of_day = "Puntos del día de la próxima " + meeting_type + ":\n"
-            with open('points_of_day_' + meeting_type + '.txt', 'r') as points_of_day_read:
+            with open('src/meeting_files/points_of_day_' + meeting_type + '.txt', 'r') as points_of_day_read:
                 contador = 1
                 for point_of_day in points_of_day_read:
                     list_points_of_day = list_points_of_day + str(contador) + ": " + point_of_day.split(":")[0] + "\n"
@@ -82,7 +82,7 @@ def list_points_of_day(bot, message):
             try:
                 meeting_type = command_parts[1].capitalize()
                 desc_points_of_day = "Descripción de "
-                with open('points_of_day_' + meeting_type + '.txt', 'r') as points_of_day_read:
+                with open('src/meeting_files/points_of_day_' + meeting_type + '.txt', 'r') as points_of_day_read:
                     for line_number, point_of_day in enumerate(points_of_day_read, start=1):
                         if line_number == command:
                             bot.send_message(message.chat.id, desc_points_of_day + point_of_day.split(": ")[0] + " \n" + point_of_day.split(": ")[1], message_thread_id = message.message_thread_id)
@@ -108,14 +108,14 @@ def change_order(bot, message):
             first_point_of_day = int(command_parts[2])
             second_point_of_day = int(command_parts[3])
             meeting_type = command_parts[1].capitalize()
-            with open('points_of_day_' + meeting_type + '.txt', 'r') as points_of_day_read:
+            with open('src/meeting_files/points_of_day_' + meeting_type + '.txt', 'r') as points_of_day_read:
                 list_points_of_day = points_of_day_read.readlines()
                 number_points_of_day = len(list_points_of_day)
             if number_points_of_day < first_point_of_day or number_points_of_day < second_point_of_day:
                 bot.reply_to(message, "Error en comando: point_of_day \nEjecute /help change", message_thread_id = message.message_thread_id)
             else:
                 list_points_of_day[first_point_of_day-1], list_points_of_day[second_point_of_day-1] = list_points_of_day[second_point_of_day-1], list_points_of_day[first_point_of_day-1]
-                with open('points_of_day_' + meeting_type + '.txt', 'w') as points_of_day_write:
+                with open('src/meeting_files/points_of_day_' + meeting_type + '.txt', 'w') as points_of_day_write:
                     points_of_day_write.writelines(list_points_of_day)
         except ValueError:
             bot.reply_to(message, "Error en comando: punto_del_día \nEjecute /help change", message_thread_id = message.message_thread_id)
@@ -125,7 +125,7 @@ def change_order(bot, message):
             second_point_of_day = int(command_parts[3])
             third_point_of_day = int(command_parts[4])
             meeting_type = command_parts[1].capitalize()
-            with open('points_of_day_' + meeting_type + '.txt', 'r') as points_of_day_read:
+            with open('src/meeting_files/points_of_day_' + meeting_type + '.txt', 'r') as points_of_day_read:
                 list_points_of_day = points_of_day_read.readlines()
                 number_points_of_day = len(list_points_of_day)
             if number_points_of_day < first_point_of_day or number_points_of_day < second_point_of_day or number_points_of_day < third_point_of_day:
@@ -157,12 +157,12 @@ def remove_point_of_day(bot, message):
             point_of_day_to_remove = int(command_parts[2])
             try:
                 actual_points_of_day = []
-                with open('points_of_day_'+ meeting_type+'.txt', 'r') as points_of_day_read:
+                with open('src/meeting_files/points_of_day_'+ meeting_type+'.txt', 'r') as points_of_day_read:
                     for line_number, point_of_day in enumerate(points_of_day_read, start=1):
                         if line_number != point_of_day_to_remove:
                             actual_points_of_day.append(point_of_day)
                             
-                with open('points_of_day_'+meeting_type+'.txt', 'w') as points_of_day_write:
+                with open('src/meeting_files/points_of_day_'+meeting_type+'.txt', 'w') as points_of_day_write:
                     for point_of_day in actual_points_of_day:
                         points_of_day_write.write(point_of_day)
             except IOError:
@@ -189,7 +189,7 @@ def create_roadmap(bot, message):
         date = command_parts[2]
         try:
             latex_content = bot_utils.create_latex_content(meeting_type, bot_utils.format_date_date(date))
-            roadmap_name = bot_utils.format_date_title(date) + ".tex"
+            roadmap_name = "src/tex_files/"+bot_utils.format_date_title(date) + ".tex"
             with open(roadmap_name, "w") as new_roadmap:
                 new_roadmap.write(latex_content)
 

@@ -1,5 +1,4 @@
 .env
 __pycache__/
 botJuanTelegram/
-*.txt
 src/utils/logs/error.log
