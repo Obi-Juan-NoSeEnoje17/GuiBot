@@ -18,7 +18,7 @@ def check_date(date):
 
 def points_of_day(type):
     latex_content = ""
-    with open ('points_of_day_' + type + '.txt', 'r') as points_of_day_read:
+    with open ('src/meeting_files/points_of_day_' + type + '.txt', 'r') as points_of_day_read:
         for point_of_day in points_of_day_read:
             title = point_of_day.strip().split(":")[0]
             desc = point_of_day.strip().split(": ")[1]
