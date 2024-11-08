@@ -1,6 +1,6 @@
 .env
 __pycache__/
-botJuanTelegram/
+GuiBotVenv/
 src/utils/logs/error.log
 src/meeting_files/
 src/tex_files/
