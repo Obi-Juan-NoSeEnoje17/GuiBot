@@ -2,3 +2,5 @@
 __pycache__/
 botJuanTelegram/
 src/utils/logs/error.log
+src/meeting_files/
+src/tex_files/
