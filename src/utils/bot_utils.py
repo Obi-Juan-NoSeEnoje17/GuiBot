@@ -1,3 +1,6 @@
+def split_command(message_text, delimiter=None):
+    return message_text.split(delimiter)
+
 def format_date_date(date):
     day = date.split("-")[0]
     month = date.split("-")[1]
@@ -75,7 +78,7 @@ def create_latex_content(type, date):
                 \end{{tabular}}
                 \label{{tab:asistentes}}
             \end{{table}}
-    \section{{rden del día}}
+    \section{{Orden del día}}
         \subsection{{Aprobación del acta de la sesión anterior}}
 {points_of_day(type)}
         
