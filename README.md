@@ -6,4 +6,4 @@ All requirements can be found on 'requirements.txt'. Use `pip install -r require
 
 Main program is /src/bot\_main.py
 
-Error logs are saved in "/src/utils/logs/error.logs"
+Error logs are saved to "/src/utils/logs/error.logs"
