@@ -1,9 +1,9 @@
 # GuiBot
 
-Telegram bot using by 'Grupo Universitario de Informática' of Valladolid to manage the meeting documents
+Telegram bot used by 'Grupo Universitario de Informática' of Valladolid to manage the meeting documents.
 
-All requirements on 'requirements.txt'
-Main program is /src/bot_main.py
+All requirements can be found on 'requirements.txt'. Use `pip install -r requirements.txt` before running the bot for the first time.
 
+Main program is /src/bot\_main.py
 
-Error logs is save in "/src/utils/logs/error.logs"
+Error logs are saved in "/src/utils/logs/error.logs"
